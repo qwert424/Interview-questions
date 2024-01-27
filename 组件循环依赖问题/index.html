@@ -1,0 +1,35 @@
+<!-- 问题：Vue中 组件A与组件 两者之间相互依赖 -->
+<!-- 思路：vue-cli通过webpack进行打包 我们要弄清楚webpage打包怎么处理循环依赖的？ -->
+<!-- 通过js还原： -->
+<!-- A.js:
+import B from './B.js';
+console.log('A module',B)
+export default 'A' -->
+<!-- B.js:
+import A from './A.js';
+console.log('B module',A)
+export default 'B' -->
+
+<!-- 将A作为webpack index.html入口文件 -->
+<!-- 我们会发现：打印台输出： -->
+<!-- B module undefined -->
+<!-- A module B -->
+
+<!-- 为什么A组件是undefined？
+因为运行入口文件A然后去引入B，运行B，此时A还没有运行完成，没有A所以为undefined， -->
+
+<!-- 通过这个思路 我们就可以知道vue中 两个组件相互嵌套 找不到逐渐A的原因了 就是因为组件B还没有解析运行完成,此时直接导入A,导致A运行为undefined -->
+<!-- 怎么解决呢 ？ -->
+<!-- 1、直接主index.js导入两组件 将两个组件的相互依赖关系不存在了 -->
+<!-- 2、生命周期运行函数的时候导入组件 在配置中配置即可 这样B就已经解析完成 A也解析完成了 
+例如：
+beforeCreate(){
+    this.$options.components.组件A=require('组件B').default
+}
+-->
+<!-- 3、动态导入 
+例如：
+components：{
+    组件A：()=>import(组件B)
+}
+-->

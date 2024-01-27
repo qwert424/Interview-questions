@@ -1,0 +1,58 @@
+<!-- 私有字段 -->
+<!-- js私有字段 最早的方法就是通过命名规范 这个是一个软约束 通过 __ 给私有字段命名 -->
+<!-- 后来通过symbol 创建私有字段 因为symbol是唯一的 这是一个很好的方法：
+如：
+const SYMBOL= Symbol('f');
+export class A(){
+    [SYMBOL]=123;
+    m(){
+        console.log(this.[SYMBOL])
+    }
+}
+缺点：1、写法麻烦 2、外部还是可以通过getOwnPropertySymbols方法来获取 仍然可以获取
+如：
+const a=new A();
+const symbols=a.getOwnPropertySymbols();    
+const SYMBOL=symbols[0]
+console.log(a[SYMBOL]);//私有字段
+
+那么还有办法呢？？？
+可以通过ts的private来约束 但是这是编译时期有效 但是运行环境无效
+如：
+class Test(){
+    private a=123
+}
+const t=new Test();
+console.log(t.a)报错！
+但是只要绕过编译就失效
+console.log(t['a'])报错！
+
+
+最后的办法就是通过 # 
+这是语言层面 运行时候生效
+#就是私有字段 但是可能有兼容性问题
+export class Test(){
+    #a=123
+}
+
+const t=new Test();
+console.log(t.#a)报错！
+
+如果又兼容性问题 就需要写一个映射表
+对象1=》{私有字段1}
+对象2=》{私有字段2}
+
+const privateMap=new weakMap();
+
+class Test(){
+    construct(){
+        privateMap.set(this,{
+            a:1
+        })
+    }
+    m(){
+        console.log(privateMap.get(this).a);
+    }
+}
+
+-->

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <!-- <button class="btn">下载</button> -->
+    <a href="。。。" download=""></a>
+    <script>
+        const btn = document.querySelector('.btn');
+        btn.onclick = async () => {
+            // 请求
+            const resp = await fetch('http://localhost:9527/es6.pdf', {
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            // 转换二进制
+            const blob = await resp.blob();
+            // 临时下载链接
+            const url = blob.createObjectURL();
+            // 创建a链接 触发下载
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'es6.pdf';
+            a.click();
+        }
+
+
+
+        // 上面的代码有很大的问题 
+        // 因为浏览器在收到后端返回的数据时，是流式传输 是不会保存在浏览器内存的 直接保存在磁盘
+        // 按照上面的代码 blob 二进制转换 就需要浏览器将所有的流式传输 保存在内存中 然后再转换成二进制 这样就太浪费内存了 文件一大网络缓慢 就会出现很大的问题
+
+        // 解决 就是 点击a链接触发事件 a链接不能带token但是可带cookie所以先发送cookie在服务端验证 然后返回一个时间很短的下载cookie 然后前端在下载文件的时候 带上这个下载cookie 这样后端就可以验证这个cookie了 然后返回文件了
+
+        // 注意事项 download是要同源的
+
+
+        // 还可以 通过 后端
+        // 1. 设置响应头
+        // app.get('/es6.pdf', (req, res) => {
+        //     res.setHeader('Content-Disposition', 'attachment; filename="es6.pdf"');
+        //     res.sendFile(__dirname + 'es6.pdf');
+        // })
+        // 浏览器接受到这个请求头 就会触发下载
+
+
+    </script>
+</body>
+
+</html>

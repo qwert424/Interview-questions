@@ -1,0 +1,38 @@
+<!-- img的sizes和srcset属性 -->
+
+<!-- 首先我们知道
+图片大小=dpr*css属性 
+保持上面等式的时候 图片会清晰展示 -->
+
+<!-- 通过window.devicePixelRatio获取当前设备的dpr值 -->
+
+<!-- 我们根据需求可以分出两种情况  -->
+<!-- 1、dpr在变化 那么我们怎么实现不同dpr显示不同的图片呢？ -->
+<!-- 假设img宽度150px -->
+<!-- <img srcset="
+http://XXXXX.com/img/150 1x,
+http://XXXXX.com/img/300 2x,
+http://XXXXX.com/img/600 4x,
+http://XXXXX.com/img/900 6x,
+http://XXXXX.com/img/1200 8x,
+" src="" alt=""> -->
+<!-- 这样子就可以实现不同dpr使用不同图片 -->
+
+<!-- 2、那么如果是dpr未变化 而是css宽度在变化呢？ -->
+<!-- 那么就需要用到sizes属性了 这就相当于一个媒体查询 告诉浏览器 在多少宽度下 图片的宽度是多少？-->
+<!-- 假设img宽度为50vw -->
+<!-- <img srcset="
+http://XXXXX.com/img/150 150w,
+http://XXXXX.com/img/300 300w,
+http://XXXXX.com/img/600 600w,
+http://XXXXX.com/img/900 900w,
+http://XXXXX.com/img/1200 1200w,
+" sizes="
+(max-width: 150px) 50vw,
+(max-width: 300px) 50vw,
+(max-width: 600px) 50vw,
+(max-width: 900px) 50vw,
+(max-width: 1200px) 50vw,
+50vw
+" src="" alt=""> -->
+<!-- 此时的srcset后面的值为计算后图像的大小 如：150w -->
